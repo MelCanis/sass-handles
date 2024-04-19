@@ -1,0 +1,48 @@
+html
+    font-size: 16px
+
+=defspec($args, $props, $key)
+    @if not index($props, nth($args, 1))
+        #{$key}: nth($args, 1)
+=spec($args, $prop, $key)
+    @if index($args, $prop)
+        #{$key}: nth($args, calc(index($args, $prop) + 1))
+=specalias($args, $prop, $key, $aliases)
+    @if index($args, $prop)
+        #{$key}: map-get($aliases, nth($args, calc(index($args, $prop) + 1)))
+=case($args, $prop, $props)
+    @if index($args, $prop)
+        @each $key, $value in $props 
+            #{$key}: $value
+=singular($args, $typepairs)
+    @each $prop in $args
+        @each $key, $type in $typepairs
+            @if type-of($prop) == $type and if(index($args, $prop) != 1, (type-of(nth($args, calc(index($args, $prop) - 1))) != string), true)
+                #{$key}: $prop
+=box($args)
+    +spec($args, w, width)
+    +spec($args, h, height)
+    +spec($args, b, border)
+    +spec($args, r, border-radius)
+    +singular($args, (background: color))
+=spc($m, $p: unset)
+    +defspec($m, (t,l,r,b), margin)
+    +spec($m, t, margin-top)
+    +spec($m, l, margin-left)
+    +spec($m, r, margin-right)
+    +spec($m, b, margin-bottom)
+    +defspec($p, (t,l,r,b), padding)
+    +spec($p, t, padding-top)
+    +spec($p, l, padding-left)
+    +spec($p, r, padding-right)
+    +spec($p, b, padding-bottom)
+=flex($args)
+    display: flex
+    $aliases: ( center: center, around: space-around, between: space-between, wrap: wrap)
+    +case($args, column, (flex-direction: column))
+    +case($args, wrap, (flex-wrap: wrap))
+    +specalias($args, j, justify-content, $aliases)
+    +specalias($args, a, align-items, $aliases)
+=font($args)
+    +singular($args, (font-size: number, color: color))
+    +case($args, bold, (font-weight: bold))
